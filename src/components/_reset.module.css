@@ -1,0 +1,35 @@
+.projectResets,
+.projectResets * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: none;
+  flex-shrink: 0;
+  text-decoration: none;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.projectResets,
+.projectResets :not(span, a, ul, ol, li, p) {
+  display: flex;
+}
+
+.projectResets ul,
+.projectResets ol {
+  text-indent: 0;
+  padding-inline-start: 1.5em;
+}
+
+.projectResets p:empty::before {
+  content: '';
+  display: inline-block;
+}
+
+.projectResets img {
+  object-fit: contain;
+}
+
+.projectResets svg {
+  overflow: visible;
+}
