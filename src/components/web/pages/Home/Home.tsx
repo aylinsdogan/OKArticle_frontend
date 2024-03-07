@@ -1,4 +1,6 @@
 import { FC, memo, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 import classes from './Home.module.css';
 import resets from '../../../_reset.module.css';
@@ -13,6 +15,8 @@ interface Props {
 
 export const Home: FC<Props> = memo(function Home(props) {
     const [activeIndex, setActiveIndex] = useState(0);
+    const navigate = useNavigate();
+
     const images = [Image1, Image2, Image3];
     const captions = [
         "Welcome to OKArticle", 
@@ -32,6 +36,10 @@ export const Home: FC<Props> = memo(function Home(props) {
 
         return () => clearInterval(interval);
     }, []);
+
+    const handleTryItClicked = () => {
+        navigate('/Summarize');
+    }
 
     return (
         <div className={`${resets.projectResets} ${classes.home_page}`}>
@@ -64,7 +72,7 @@ export const Home: FC<Props> = memo(function Home(props) {
                                     
                                 </div>
                             ))}
-                            <div className={classes.try_button_container}>
+                            <div className={classes.try_button_container} onClick={handleTryItClicked}>
                                 <button className={classes.try_button}>Try It Now</button>
                             </div>
                             <div className={classes.forward_button_container}>
