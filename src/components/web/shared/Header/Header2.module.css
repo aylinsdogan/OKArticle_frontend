@@ -1,0 +1,22 @@
+@import url('https://fonts.cdnfonts.com/css/grandview');
+
+.header2 {
+  height: 45px;
+  width: 100%;
+  z-index: 10;
+  background-color: #05072b;
+  backdrop-filter: blur(3px);
+  box-shadow: 0 4px 4px rgba(4, 31, 95, 0.401);
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+}
+
+.header_bar2 {
+  height: 25px;
+  width: 115px;
+  margin-left: 20px;
+  font-size: 8px;
+  font-family: 'Grandview', sans-serif;                                         
+  color: #F5F5F5;
+}
