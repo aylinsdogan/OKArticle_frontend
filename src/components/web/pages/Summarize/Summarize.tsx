@@ -73,7 +73,7 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
             alert('Please upload at least one PDF file to summarize.');
         }
     };
-
+ 
     return (
         <div className={`${resets.projectResets} ${classes.summarize_page}`}>
             <Header2 />
