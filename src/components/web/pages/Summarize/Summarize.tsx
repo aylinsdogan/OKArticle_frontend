@@ -16,6 +16,7 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
     const [isDragOver, setIsDragOver] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [summaryRatio, setSummaryRatio] = useState(0.1);
+    const rangeValues = Array.from({ length: 8 }, (_, i) => (i + 1) / 10);
 
     const updatePdfFiles = (newFiles: File[]) => {
         setUploadedFiles(currentFiles => {
@@ -138,22 +139,20 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                 </div>
             </div>
             {showPopup && (
-                <div className={classes.popup_container}>
-                    <div className={classes.popup}>
+                <div className={classes.popup_container} onClick={() => setShowPopup(false)}>
+                    <div className={classes.popup} onClick={(e) => e.stopPropagation()}>
                         <h2>Select Summary Ratio</h2>
-                        <p> How long would you like your summary to be </p>
-                        <select
-                            className={classes.ratio}
+                        <p> How long would you like your summary to be? </p>
+                        <input
+                            type="range"
+                            min="0.1"
+                            max="0.8"
+                            step="0.1"
                             value={summaryRatio}
                             onChange={e => setSummaryRatio(parseFloat(e.target.value))}
-                        >
-                            {[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8].map(ratio => (
-                                <option key={ratio} value={ratio}>
-                                    {ratio}
-                                </option>
-                            ))}
-                        </select>
-                        <button onClick={() => setShowPopup(false)}>Close</button>
+                        />
+                        <p> Summary Ratio: {summaryRatio.toFixed(1)}</p>
+                        <button onClick={() => setShowPopup(false)}>Summarize</button>
                     </div>
                 </div>
             )}
