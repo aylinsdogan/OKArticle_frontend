@@ -270,18 +270,19 @@
   color: #000000bf;
 }
 .popup button {
-  margin-top: 5%;
-  height: 30px;
-  width: 100px;
+  margin-top: 10%;
+  height: 40px;
+  width: 150px;
   background-color: #007bff;
   align-items: center;
   justify-content: center;
-  color: #F5F5F5;
+  color: #ffffff;
 } 
-.ratio {
-  width: 50%;
-  height: 30px;
-  border-bottom: solid 2px #4456bb72;
-  font-size: 15px;
-  color: #000000bf;
+.popup button:hover {
+  background-color: #0056b3;
+  transition: ease-in-out .3s ;
 }
+
+.popup input {
+  width: 50%;
+}  

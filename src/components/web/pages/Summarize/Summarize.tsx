@@ -1,5 +1,4 @@
 import { FC, memo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import classes from './Summarize.module.css';
 import resets from '../../../_reset.module.css';
@@ -72,7 +71,7 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
             alert('Please upload at least one PDF file to summarize.');
         }
     };
-
+  
     return (
         <div className={`${resets.projectResets} ${classes.summarize_page}`}>
             <Header2 />
@@ -138,22 +137,20 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                 </div>
             </div>
             {showPopup && (
-                <div className={classes.popup_container}>
-                    <div className={classes.popup}>
+                <div className={classes.popup_container} onClick={() => setShowPopup(false)}>
+                    <div className={classes.popup} onClick={(e) => e.stopPropagation()}>
                         <h2>Select Summary Ratio</h2>
-                        <p> How long would you like your summary to be </p>
-                        <select
-                            className={classes.ratio}
+                        <p> How long would you like your summary to be? </p>
+                        <input
+                            type="range"
+                            min="0.1"
+                            max="0.8"
+                            step="0.1"
                             value={summaryRatio}
                             onChange={e => setSummaryRatio(parseFloat(e.target.value))}
-                        >
-                            {[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8].map(ratio => (
-                                <option key={ratio} value={ratio}>
-                                    {ratio}
-                                </option>
-                            ))}
-                        </select>
-                        <button onClick={() => setShowPopup(false)}>Close</button>
+                        />
+                        <p> Summary Ratio: {summaryRatio.toFixed(1)}</p>
+                        <button onClick={() => setShowPopup(false)}>Summarize</button>
                     </div>
                 </div>
             )}
