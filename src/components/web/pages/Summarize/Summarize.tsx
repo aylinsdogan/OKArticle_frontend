@@ -1,5 +1,4 @@
 import { FC, memo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import classes from './Summarize.module.css';
 import resets from '../../../_reset.module.css';
@@ -16,7 +15,6 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
     const [isDragOver, setIsDragOver] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [summaryRatio, setSummaryRatio] = useState(0.1);
-    const rangeValues = Array.from({ length: 8 }, (_, i) => (i + 1) / 10);
 
     const updatePdfFiles = (newFiles: File[]) => {
         setUploadedFiles(currentFiles => {
