@@ -221,9 +221,6 @@
   transition: ease-in-out .4s;
 }
 
-.features_bars {
-  flex-direction: column;
-}
 .findContext_input {
   height: 40px;
   width: 100%;
@@ -241,6 +238,7 @@
   caret-color: #2473c865;
 }
 
+/* POP UP */
 .popup_container {
   position: fixed;
   width: 100%;
