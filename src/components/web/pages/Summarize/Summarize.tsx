@@ -1,6 +1,7 @@
 import { FC, memo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { jsPDF } from "jspdf";
 
 import classes from './Summarize.module.css';
 import resets from '../../../_reset.module.css';
@@ -22,10 +23,11 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
     const [summaryRatio, setSummaryRatio] = useState(0.2);
     const [summaryAvail, setsummaryAvail] = useState(false);
     const [optionsAvail, setOptionsAvail] = useState(false);
-    const [summaryOutput, setSummaryOutput] = useState("");
-
+    const [summaryOutput, setSummaryOutput] = useState("selamss");
     const [showErrorPopup, setShowErrorPopup] = useState(false);
+    const [inputKey, setInputKey] = useState(Date.now());
 
+    
     useEffect(() => {
         let timeout: number;
         if (showErrorPopup) {
@@ -37,36 +39,49 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
         return () => clearTimeout(timeout);
       }, [showErrorPopup]);
 
+    const saveSummaryAsPDF = () => {
+        const doc = new jsPDF();
+        console.log(summaryOutput)
+        doc.setFont('Times', 'normal');
+        doc.setFontSize(12);
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 10; 
+        const maxLineWidth = pageWidth - (margin * 2);
+        const lines = doc.splitTextToSize(summaryOutput, maxLineWidth);
+        doc.text(lines, margin, 10);
+        doc.save('summary.pdf');
+    };
+
     const updatePdfFiles = (newFiles: File[]) => {
-        setIfFilesUploaded(false)
-        setsummaryAvail(false) 
-        setOptionsAvail(false) 
         const filteredNewFiles = newFiles.filter(newFile => 
             newFile.type === "application/pdf" && 
             !uploadedFiles.some(file => file.name === newFile.name)
         );
         setUploadedFiles(currentFiles => {
             const updatedFiles = [...currentFiles, ...filteredNewFiles];
-            if (!selectedFile || !selectedFile.name || filteredNewFiles.length > 0) {
+            if (updatedFiles.length > 1) {
                 setSelectedFile(updatedFiles[0]);
+            } else {
+                setSelectedFile(null);
             }
-            console.log(updatedFiles)
             return updatedFiles;
         });
     };
-
+    
     const removeFile = (fileName: string) => {
         setUploadedFiles(currentFiles => {
-            const filteredFiles = currentFiles.filter(file => file.name !== fileName);
-
-            if (selectedFile && selectedFile.name === fileName) {
-                setSelectedFile(filteredFiles[0] || null);
+            const updatedFiles = currentFiles.filter(file => file.name !== fileName);
+            if (updatedFiles.length > 1) {
+                setSelectedFile(updatedFiles[0]);
+            } else {
+                setSelectedFile(null);
             }
-            console.log(filteredFiles)
-            return filteredFiles;
+            return updatedFiles;
         });
+        setInputKey(Date.now());
     };
-
+    
+    
     const selectFile = (fileName: string) => {
         const file = uploadedFiles.find(file => file.name === fileName);
         if (file) {
@@ -103,6 +118,8 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files ? Array.from(event.target.files) : [];
         updatePdfFiles(files);
+        // Reset the input by changing its key
+        setInputKey(Date.now());
     };
 
     
@@ -122,7 +139,6 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
             setOptionsAvail(true) // for options
             setIfFilesUploaded(true) // for upload
             setSummaryOutput(response.data)
-            // empty files
             console.log('File upload successful', response.data);
 
         } catch (error) {
@@ -149,13 +165,12 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
             });
         
             try {
-                //const response = await axios.post('http://10.5.66.205:8000/summarize', formData);     
+                const response = await axios.post('http://10.5.66.205:8000/upload', formData);     
                 setShowPopup(false)  
                 setLoading2(false)
                 setOptionsAvail(true)
                 setIfFilesUploaded(true)
-                
-                //console.log('File upload successful', response.data);
+                console.log('File upload successful', response.data);
 
             } catch (error) {
                 setShowErrorPopup(true);
@@ -178,7 +193,7 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
     const handleRecommendArticle = async () => {
         try {
             let data = {operation: 'recommendArticle'};  // the key 'user' matches your FastAPI model
-            const response = await axios.post('http://10.3.134.104:8000/deneme2', data, {
+            const response = await axios.post('http://10.3.134.104:8000/recommendArticle', data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -191,7 +206,7 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
     const handleFindContext = async () => {
         try {
             let data = {user: 'a'};  // the key 'user' matches your FastAPI model
-            const response = await axios.post('http://10.3.134.104:8000/deneme2', data, {
+            const response = await axios.post('http://10.3.134.104:8000/findContext', data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -222,6 +237,7 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                                     onDragLeave={handleDragLeave}
                                 >
                                     <input
+                                        key={inputKey}
                                         id="file-upload"
                                         className={classes.file_input}
                                         type="file"
@@ -240,7 +256,9 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                                 </div>
                                 <div className={classes.uploaded_files_container}>
                                 {ifFilesUploaded ? (
-                                    <div className={classes.uploaded_files_header}> Uploaded Files </div>
+                                    <div className={classes.uploaded_files_header}> 
+                                        <p> Uploaded Files </p>
+                                    </div>
                                 ):(null)}
                                     {uploadedFiles.map(file => (
                                         <div 
@@ -274,9 +292,17 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                                             Summary will be displayed if you click on "Summarize"
                                         </p>
                                         ):(
-                                        <p className={classes.writings_after}>
-                                            {summaryOutput}
-                                        </p>
+                                        <div className={classes.summary_output}>
+                                            <p className={classes.writings_after}>
+                                                {summaryOutput}
+                                                Download the React DevTools for a better development experience
+                                            </p>
+                                            <div className={classes.save_pdf_container}>
+                                                <button onClick={saveSummaryAsPDF} className={classes.save_pdf_button}>
+                                                    Save as PDF
+                                                </button>
+                                            </div>
+                                        </div>
 
                                     )}
                                     </div>
