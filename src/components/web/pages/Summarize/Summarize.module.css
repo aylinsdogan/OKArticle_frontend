@@ -180,6 +180,8 @@
   color: #ffffff;
   font-weight: 400;
 }
+
+.save_pdf_button:hover,
 .upload_pdf:hover {
   background-color: #0056b3;
   transition: ease-in-out .4s;
@@ -224,12 +226,26 @@
   color: #00000083;
 }
 
+.summary_output {
+  flex-direction: column;
+}
+
 .writings_after {
   margin-top: 5px;
   font-weight: 300;
   font-size: 15px;
   color: #000000fc;
   white-space: pre-line;
+}
+
+.save_pdf_button {
+  margin-top: 10px;
+  height: 30px;
+  width: 130px;
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+  background-color: #007bff;
 }
 .features {
    width: 40%;
