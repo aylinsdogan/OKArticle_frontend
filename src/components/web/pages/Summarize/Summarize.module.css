@@ -58,18 +58,38 @@
   flex-direction: column;
   background-color: #F5F5F5;
   gap: 10px;
-  /* Add more styling as per your design requirements */
+}
+.uploaded_file {
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.uploaded_file span{
+  height: auto;
+  width: calc(50% - 10px);
+}
+.selected_file {
+  color: #000;
+  font-size: 15px;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(0, 68, 255, 0.7);
+  transition: ease-in-out .1s;
+}
+.unselected_files {
+  color: #000;
+  font-size: 14px;
+  cursor: default;
 }
 .delete_button {
   width: 15px;
   height: 15px;
+  margin-left: 10px;
   align-items: center;
   justify-content: center;
-  margin-left: 15px;
 }
 .delete_icon {
-  height: 20px;
-  width: 20px;
+  height: 17px;
+  width: 17px;
 }
 .delete_icon:hover {
   height: 15px;
@@ -164,6 +184,17 @@
   background-color: #0056b3;
   transition: ease-in-out .4s;
 }
+
+.uploaded_files_header {
+  height: 5px;
+  width: 100%;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  border-bottom: 1.5px solid #007bffa2;
+  color: #007bffa2;
+}
 /* BOTTOM BAR */
 .summarize_bottom_bar{
   width: 100%;
@@ -191,6 +222,14 @@
   text-align: center;
   font-size: 20px;
   color: #00000083;
+}
+
+.writings_after {
+  margin-top: 5px;
+  font-weight: 300;
+  font-size: 15px;
+  color: #000000fc;
+  white-space: pre-line;
 }
 .features {
    width: 40%;
@@ -267,7 +306,7 @@
 .popup p {
   color: #000000bf;
 }
-.popup button {
+.popupButton {
   margin-top: 10%;
   height: 40px;
   width: 150px;
@@ -276,11 +315,66 @@
   justify-content: center;
   color: #ffffff;
 } 
-.popup button:hover {
+.popupButton button:hover {
   background-color: #0056b3;
   transition: ease-in-out .3s ;
 }
 
+.loadingIcon {
+  width: 15px;
+  height: 15px;
+  content: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='38' viewBox='0 0 40 38'><circle cx='7.43216' cy='6.9321' r='6.5679' fill='%23ffffff'/><circle cx='32.568' cy='6.9321' r='6.5679' fill='%23ffffff'/><circle cx='7.43216' cy='31.0679' r='6.5679' fill='%23ffffff'/><circle cx='32.568' cy='31.0679' r='6.5679' fill='%23ffffff'/></svg>");
+  animation: spin 2s linear infinite;
+
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 .popup input {
   width: 50%;
 }  
+
+.error_message {
+  position: absolute;
+  width: 220px;
+  height: 39px;
+  border-radius: 25px;
+  margin-top: 30px;
+  background-color: #FF5959;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error_pop_up {
+  height: 50px;
+  width: 500px;
+  z-index: 200;
+  animation: popUpAnimation 0.5s ease, fadeOutAnimation 0.5s 3s ease forwards;
+}
+
+@keyframes popUpAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutAnimation {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}

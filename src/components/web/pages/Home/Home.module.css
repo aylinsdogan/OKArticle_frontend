@@ -113,11 +113,24 @@
   font-weight: 500;
   background-color: rgba(0, 0, 0, 0);
   transition: background-color 0.3s ease, color 0.3s ease, font-size 0.3s ease; /* Add font-size to the transition */
+  animation: bounce 2s infinite;
 }
 
 .try_button:hover {
   color: #ffffff8c ;
   font-size: 35px;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
 }
 
 .back_button_container,
