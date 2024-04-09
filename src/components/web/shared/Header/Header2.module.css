@@ -19,4 +19,13 @@
   font-size: 8px;
   font-family: 'Grandview', sans-serif;                                         
   color: #F5F5F5;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  margin-top: 8px;
+  height: 60px; /* or any other size */
+  width: 60px;
+  width: auto; /* to maintain aspect ratio */
 }

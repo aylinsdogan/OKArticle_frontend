@@ -170,10 +170,17 @@
   justify-content: center;
   gap: 15px;
 }
+.summarize_pdf {
+  width: 40%;
+}
 
 .upload_pdf {
+  width: 60%;
+}
+
+.summarize_pdf,
+.upload_pdf {
   height: 35px;
-  width: 50%;
   align-items: center;
   justify-content: center;
   background-color: #007bff;
@@ -278,7 +285,23 @@
 }
 .recommend_output p {
   font-size: 15px;
+  display: inline;
   color: #000000b7;
+}
+
+.calsim {
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.calsim_header {
+  color: #2473c8ab !important ;
+  border-bottom: #2473c8a5 1px solid;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+  font-size: 14px !important;
+  font-weight: 600;
 }
 
 .findContext_header,
@@ -314,19 +337,42 @@
   flex-direction: row;
 }
 
-.calsim_output,
+.upload_icon2 {
+  height: 18px;
+  width: 18px;
+  margin-right: 3px;
+}
+.rec_item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  font-size: 15px;
+  color: #000000e0;
+}
+.recommend_output {
+  gap: 10px;
+}
+
 .recommend_output,
 .findContext_output {
+  color: #000000e7 !important;
+  flex-direction: column;
+  font-size: 15px;
+}
+
+.calsim_output {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: #000000e7;
 }
 
 .findContext_output2 {
-  color: #0000009d;
+  color: #000000b4;
   align-items: center;
   text-align: center;
   justify-content: center;
+  font-size: 15px;
 }
 /* POP UP */
 .popup_container {

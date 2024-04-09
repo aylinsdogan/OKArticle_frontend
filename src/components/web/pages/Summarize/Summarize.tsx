@@ -12,7 +12,8 @@ interface Props {
     className?: string;
 }
 
-const IP = ""
+const IP = "192.168.242.108:8000" // Will be changed
+
 export const Summarize: FC<Props> = memo(function Summarize(props) {
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -125,7 +126,6 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files ? Array.from(event.target.files) : [];
         updatePdfFiles(files);
-        // Reset the input by changing its key
         setInputKey(Date.now());
     };
 
@@ -232,7 +232,14 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
 
     const handleFindContext = async () => {
         try {
-            const response = await axios.post(`http://${IP}/FindContext`, {string: contextSearchTerm });
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            const formData = new FormData();
+            formData.append('string', contextSearchTerm.toString());
+            const response = await axios.post(`http://${IP}/FindContext`, formData);
             setIfFindContext(true);
             setContextResults(response.data);
             console.log('Context search successful', response.data);
@@ -241,6 +248,7 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
             console.error('Error in context search', error);
         }
     };
+
     
     return (
         <div className={`${resets.projectResets} ${classes.summarize_page}`}>
@@ -308,7 +316,7 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                                             "Upload"
                                         )}         
                                         </button>
-                                        <button className={classes.upload_pdf} onClick={handleSummarizeClick}>Summarize</button>
+                                        <button className={classes.summarize_pdf} onClick={handleSummarizeClick}>Summarize</button>
                                     </div>
                                 </div>
                                 <div className={classes.summarize_bottom_bar}>
@@ -341,7 +349,11 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                                             {/* calculate sim */}
                                             <button className={classes.features_button} onClick={handleCalculateSimilarity}>Calculate Similarity</button>
                                             {ifCalsim ? (
-                                                <div className={classes.calsim_output}> {CalculateSimResults} </div>
+                                                <div className={classes.calsim}>
+                                                    <p className={classes.calsim_header}> Similarity Score </p>
+                                                    <div className={classes.calsim_output}> {CalculateSimResults} </div>
+                                                </div>
+                                                
                                             ):(null)}
                                             {/* Recommend */}
                                             <button className={classes.features_button} onClick={handleRecommendArticle}>Recommend Article</button>
@@ -349,7 +361,10 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                                                 <div className={classes.recommend_output}>
                                                     <p className={classes.rec_header}> Recommended Articles</p>
                                                     {RecommendArticleResults?.map((result, index) => (
-                                                        <p key={index}>{result}</p>
+                                                        <div key={index} className={classes.rec_item}>
+                                                            <img src={uploadIcon} alt="Upload icon" className={classes.upload_icon2} />
+                                                            <div className={classes.rec_item}>{result}</div>
+                                                        </div>
                                                     ))}
                                                 </div>
                                             ) : null}
@@ -375,7 +390,7 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                                                         ))}
                                                     </div>
                                                 ) : (
-                                                    <div className={classes.findContext_output2}> Can not found the context</div>
+                                                    <div className={classes.findContext_output2}> Can not found the context!</div>
                                                 )
                                             ) : null}
                                         </div>
@@ -407,7 +422,6 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                         ) : (
                             "Summarize"
                         )}
-                        
                         </button> 
                       
                     </div>
