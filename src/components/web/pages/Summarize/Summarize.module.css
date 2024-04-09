@@ -228,6 +228,7 @@
 
 .summary_output {
   flex-direction: column;
+  color: #000;
 }
 
 .writings_after {
@@ -275,9 +276,24 @@
   background-color: #2473c8d4;
   transition: ease-in-out .4s;
 }
+.recommend_output p {
+  font-size: 15px;
+  color: #000000b7;
+}
+
+.findContext_header,
+.rec_header {
+  color: #2473c8d4 !important ;
+  border-bottom: #2473c8d4 1px solid;
+  justify-content: center;
+  text-align: center;
+  font-size: 15px !important;
+  font-weight: 600;
+}
 
 .findContext_input {
   height: 40px;
+  margin-left: 15px;
   width: 100%;
   background-color: #F5F5F5;
   border-bottom: solid 2px #007bff3c;
@@ -292,7 +308,26 @@
   border-bottom: solid 2px #2473c865;
   caret-color: #2473c865;
 }
+.findContext_container {
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
 
+.calsim_output,
+.recommend_output,
+.findContext_output {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.findContext_output2 {
+  color: #0000009d;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
 /* POP UP */
 .popup_container {
   position: fixed;
