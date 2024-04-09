@@ -1,5 +1,4 @@
 import { FC, memo, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jsPDF } from "jspdf";
 
@@ -13,6 +12,7 @@ interface Props {
     className?: string;
 }
 
+const IP = ""
 export const Summarize: FC<Props> = memo(function Summarize(props) {
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -23,11 +23,14 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
     const [summaryRatio, setSummaryRatio] = useState(0.2);
     const [summaryAvail, setsummaryAvail] = useState(false);
     const [optionsAvail, setOptionsAvail] = useState(false);
-    const [summaryOutput, setSummaryOutput] = useState("selamss");
+    const [summaryOutput, setSummaryOutput] = useState("");
     const [showErrorPopup, setShowErrorPopup] = useState(false);
     const [inputKey, setInputKey] = useState(Date.now());
 
-    
+    const [ifCalsim, setIfCalsim] = useState(false);
+    const [ifFindContext, setIfFindContext] = useState(false);
+    const [ifRecommend, setIfRecommend] = useState(false);
+
     useEffect(() => {
         let timeout: number;
         if (showErrorPopup) {
@@ -53,6 +56,11 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
     };
 
     const updatePdfFiles = (newFiles: File[]) => {
+        setIfFilesUploaded(false)
+        setsummaryAvail(false)
+        setIfCalsim(false)
+        setIfFindContext(false)
+        setIfRecommend(false)
         const filteredNewFiles = newFiles.filter(newFile => 
             newFile.type === "application/pdf" && 
             !uploadedFiles.some(file => file.name === newFile.name)
@@ -80,7 +88,6 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
         });
         setInputKey(Date.now());
     };
-    
     
     const selectFile = (fileName: string) => {
         const file = uploadedFiles.find(file => file.name === fileName);
@@ -122,17 +129,23 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
         setInputKey(Date.now());
     };
 
-    
     const handleSummarizeClick2 = async() => {
         setLoading(true)
         const formData = new FormData();
         formData.append('ratio', summaryRatio.toString());
+        if (selectedFile) {
+            const selectedIndex = uploadedFiles.findIndex(file => file === selectedFile);
+            formData.append('index', selectedIndex.toString());
+        } else {
+            formData.append('index', '0');
+        }
+
         uploadedFiles.forEach((file) => {
             formData.append(`files`, file);  
         });
     
         try {
-            const response = await axios.post('http://10.5.66.205:8000/summarize', formData);     
+            const response = await axios.post(`http://${IP}/summarize`, formData);
             setShowPopup(false)  
             setLoading(false)
             setsummaryAvail(true) // for summary
@@ -156,16 +169,23 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
             alert('Please upload at least one PDF file to summarize.');
         }
     };
+
     const handleUploadClick = async () => {
         if (uploadedFiles.length > 0) {
             setLoading2(true)
             const formData = new FormData();
+            if (selectedFile) {
+                const selectedIndex = uploadedFiles.findIndex(file => file === selectedFile);
+                formData.append('index', selectedIndex.toString());
+            } else {
+                formData.append('index', '0');
+            }
             uploadedFiles.forEach((file) => {
                 formData.append(`files`, file);  
             });
         
             try {
-                const response = await axios.post('http://10.5.66.205:8000/upload', formData);     
+                const response = await axios.post(`http://${IP}/upload`, formData);
                 setShowPopup(false)  
                 setLoading2(false)
                 setOptionsAvail(true)
@@ -181,41 +201,47 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
             alert('Please upload at least one PDF file to summarize.');
         }
     }
+
+    const [CalculateSimResults, setCalculateSimResults] = useState("");
     const handleCalculateSimilarity = async () => {
         try {
-            let data = {calSim: 'calculateSimilarity'};  // the key 'user' matches your FastAPI model
-            const response = await axios.get('http://10.3.134.104:8000/CalSim')
+            const response = await axios.get(`http://${IP}/CalSim`)
+            setIfCalsim(true)
+            setCalculateSimResults(response.data)
             console.log('File upload successful', response.data);
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Error uploading file', error);
         }
     }
+    const [RecommendArticleResults, setRecommendArticleResults] = useState<string[] | null>(null);
     const handleRecommendArticle = async () => {
         try {
-            let data = {operation: 'recommendArticle'};  // the key 'user' matches your FastAPI model
-            const response = await axios.post('http://10.3.134.104:8000/recommendArticle', data, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await axios.get(`http://${IP}/RecommendArticle`)
+            setIfRecommend(true)
+            setRecommendArticleResults(response.data);
             console.log('File upload successful', response.data);
-        } catch (error) {
+        } 
+        catch (error) {
             console.error('Error uploading file', error);
         }
     }
+
+    const [contextSearchTerm, setContextSearchTerm] = useState('');
+    const [contextResults, setContextResults] = useState<string[] | null>(null);
+
     const handleFindContext = async () => {
         try {
-            let data = {user: 'a'};  // the key 'user' matches your FastAPI model
-            const response = await axios.post('http://10.3.134.104:8000/findContext', data, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log('File upload successful', response.data);
-        } catch (error) {
-            console.error('Error uploading file', error);
+            const response = await axios.post(`http://${IP}/FindContext`, {string: contextSearchTerm });
+            setIfFindContext(true);
+            setContextResults(response.data);
+            console.log('Context search successful', response.data);
+        } 
+        catch (error) {
+            console.error('Error in context search', error);
         }
     };
+    
     return (
         <div className={`${resets.projectResets} ${classes.summarize_page}`}>
             <Header2 />
@@ -312,12 +338,46 @@ export const Summarize: FC<Props> = memo(function Summarize(props) {
                                             Options will be displayed after uploading some PDFs
                                         </p> ):(
                                         <div className={classes.features_option}>
+                                            {/* calculate sim */}
                                             <button className={classes.features_button} onClick={handleCalculateSimilarity}>Calculate Similarity</button>
+                                            {ifCalsim ? (
+                                                <div className={classes.calsim_output}> {CalculateSimResults} </div>
+                                            ):(null)}
+                                            {/* Recommend */}
                                             <button className={classes.features_button} onClick={handleRecommendArticle}>Recommend Article</button>
+                                            {ifRecommend ? (
+                                                <div className={classes.recommend_output}>
+                                                    <p className={classes.rec_header}> Recommended Articles</p>
+                                                    {RecommendArticleResults?.map((result, index) => (
+                                                        <p key={index}>{result}</p>
+                                                    ))}
+                                                </div>
+                                            ) : null}
+                                            {/* find context */}
                                             <button className={classes.features_button} onClick={handleFindContext}>Find Context</button>
-                                            <input type="text" 
-                                                className={classes.findContext_input}
-                                            />
+                                            <div className={classes.findContext_container}>
+                                                <input 
+                                                    type="text"
+                                                    className={classes.findContext_input}
+                                                    value={contextSearchTerm}
+                                                    onChange={(e) => setContextSearchTerm(e.target.value)}
+                                                />
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="#007bff" viewBox="0 0 16 16">
+                                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM6.5 11A4.5 4.5 0 1 1 11 6.5 4.505 4.505 0 0 1 6.5 11z"/>
+                                                </svg>
+                                            </div>
+                                            {ifFindContext ? (
+                                                contextResults && contextResults.length > 0 ? (
+                                                    <div className={classes.findContext_output}>
+                                                        <p className={classes.findContext_header}> Context </p>
+                                                        {contextResults.map((result, index) => (
+                                                            <p key={index}>{result}</p>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    <div className={classes.findContext_output2}> Can not found the context</div>
+                                                )
+                                            ) : null}
                                         </div>
                                         )}
                                     </div>
